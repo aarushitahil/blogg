@@ -2,27 +2,21 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 from .models import BlogPost
-from .forms import BlogPostForm, SignUpForm, UserProfileForm
+from .forms import SignUpForm, BlogPostForm
 
 def signup(request):
     if request.user.is_authenticated:
         return redirect('blog_list')
     if request.method == 'POST':
         user_form = SignUpForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user = user_form.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save()
             login(request, user)
             return redirect('blog_list')
     else:
         user_form = SignUpForm()
-        profile_form = UserProfileForm()
-    return render(request, 'registration/signup.html', {'user_form': user_form, 'profile_form': profile_form})
+    return render(request, 'registration/signup.html', {'user_form': user_form})
 
 def blog_list(request):
     posts = BlogPost.objects.all().order_by('-created_at')
@@ -64,4 +58,5 @@ def blog_delete(request, pk):
         post.delete()
         return redirect('blog_list')
     return render(request, 'blog_confirm_delete.html', {'post': post})
+
 

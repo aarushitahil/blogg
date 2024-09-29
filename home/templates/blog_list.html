@@ -10,7 +10,6 @@
             {% endif %}
             <p>{{ post.content|truncatewords:30 }}</p>
             <p>By {{ post.author }} on {{ post.created_at }}</p>
-            <p>Category: {{ post.category.name }}</p>
         </article>
     {% endfor %}
 {% endblock %}
